@@ -28,7 +28,7 @@ import (
 	"github.com/flike/kingshard/mysql"
 )
 
-//client <-> proxy
+// client <-> proxy
 type ClientConn struct {
 	sync.Mutex
 
@@ -70,7 +70,7 @@ type ClientConn struct {
 
 var DEFAULT_CAPABILITY uint32 = mysql.CLIENT_LONG_PASSWORD | mysql.CLIENT_LONG_FLAG |
 	mysql.CLIENT_CONNECT_WITH_DB | mysql.CLIENT_PROTOCOL_41 |
-	mysql.CLIENT_TRANSACTIONS | mysql.CLIENT_SECURE_CONNECTION
+	mysql.CLIENT_TRANSACTIONS | mysql.CLIENT_SECURE_CONNECTION | mysql.CLIENT_PLUGIN_AUTH
 
 var baseConnId uint32 = 10000
 
@@ -175,6 +175,8 @@ func (c *ClientConn) writeInitialHandshake() error {
 	//auth-plugin-data-part-2
 	data = append(data, c.salt[8:]...)
 
+	data = append(data, 0)
+	data = append(data, mysql.AUTH_NAME...)
 	//filter [00]
 	data = append(data, 0)
 
